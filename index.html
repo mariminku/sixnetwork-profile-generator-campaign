@@ -4,9 +4,86 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SIX Frame Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #111;
+      color: white;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #canvas-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin-top: 20px;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+    }
+    input[type="file"] {
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif;">
+<body>
   <h1>👋 Welcome to SIX Frame Generator</h1>
-  <p>This page will help users generate profile frames with SIX & Pas.ss style</p>
+  <p>This page lets you upload a profile image and overlay it with SIX branding</p>
+
+  <input type="file" accept="image/*" id="upload" />
+  
+  <div id="canvas-container">
+    <canvas id="canvas" width="800" height="800"></canvas>
+  </div>
+
+  <button onclick="downloadImage()">📥 Download Image</button>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const background = new Image();
+    background.src = './BG_SIX_1_0.png'; // make sure this file is in the repo
+
+    background.onload = () => {
+      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    };
+
+    document.getElementById('upload').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const uploadedImage = new Image();
+        uploadedImage.onload = function () {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(uploadedImage, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(background, 0, 0, canvas.width, canvas.height); // overlay after
+        };
+        uploadedImage.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = 'six-profile.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
 </body>
 </html>
