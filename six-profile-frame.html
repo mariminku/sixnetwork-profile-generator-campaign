@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIX Identity Frame Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: linear-gradient(to bottom, #001f3f, #0074d9);
+      color: white;
+      padding: 2rem;
+    }
+    .frame-preview {
+      margin-top: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+    .frame-preview img {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+    }
+    .upload-label {
+      background-color: white;
+      color: #001f3f;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+    .btn-download {
+      margin-top: 1.5rem;
+      background-color: #39cccc;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 5px;
+      color: #001f3f;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>SIX Identity Profile Frame</h1>
+  <p>Add your photo to our Songkran-themed frame and share it with #SIXIdentity!</p>
+  <input type="file" accept="image/*" id="upload" hidden />
+  <label for="upload" class="upload-label">Upload Your Photo</label>
+
+  <div class="frame-preview" id="preview">
+    <canvas id="canvas" width="300" height="300"></canvas>
+  </div>
+
+  <button class="btn-download" onclick="downloadImage()">Download & Share</button>
+
+  <script>
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const frame = new Image();
+    frame.src = 'https://your-cdn-link.com/songkran-frame.png';
+
+    upload.addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          frame.onload = function () {
+            ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+          }
+        }
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = 'six-profile-frame.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
